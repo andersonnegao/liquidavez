@@ -1,0 +1,50 @@
+'use client';
+
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { Auth } from '@supabase/auth-ui-react';
+import { ThemeSupa } from '@supabase/auth-ui-shared';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
+const AuthPage: React.FC = () => {
+  const supabase = createClientComponentClient();
+  const router = useRouter();
+  const [session, setSession] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === 'SIGNED_IN') {
+          setSession(session);
+          router.push('/');
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, [router, supabase]);
+
+  if (session) {
+    router.push('/');
+    return null;
+  }
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-neutral-900 p-4">
+      <div className="w-full max-w-sm rounded-xl border border-neutral-800 bg-neutral-900/50 p-6 shadow-lg backdrop-blur-sm">
+        <Auth
+          supabaseClient={supabase}
+          appearance={{ theme: ThemeSupa }}
+          providers={['github']}
+          redirectTo="http://localhost:3000/auth/callback"
+        />
+      </div>
+    </div>
+  );
+};
+
+export default AuthPage;

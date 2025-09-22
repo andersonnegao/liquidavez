@@ -1,63 +1,63 @@
+'use client';
+
 import Image from 'next/image';
-import Link from 'next/link';
-import type { FC } from 'react';
-import React from 'react';
-
-import type { ProductType } from '@/data/types';
-
-import LikeButton from './LikeButton';
+import { useCartStore } from '@/store/cartStore';
 
 interface ProductCardProps {
-  product: ProductType;
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image_url: string;
   className?: string;
-  showPrevPrice?: boolean;
 }
 
-const ProductCard: FC<ProductCardProps> = ({
-  product,
+const ProductCard: React.FC<ProductCardProps> = ({
+  id,
+  name,
+  description,
+  price,
+  image_url,
   className,
-  showPrevPrice = false,
 }) => {
+  const addToCart = useCartStore((state) => state.addToCart);
+
+  const handleAddToCart = () => {
+    addToCart({ id, name, price, image_url });
+  };
+
+  const formattedPrice = price ? price.toFixed(2) : '0.00';
+
   return (
     <div
-      className={`transitionEffect bg[hsl(var(--background))] relative rounded-2xl p-3 shadow-md ${className}`}
+      className={`transitionEffect bg-white relative rounded-2xl p-3 shadow-md ${className}`}
     >
-      <div className="h-[250px] w-full bg[hsl(var(--background))] bg-red-500 overflow-hidden rounded-2xl lg:h-[220px] 2xl:h-[300px]">
-        {product.justIn && (
-          <div className="absolute left-6 top-0 rounded-b-lg bg-primary px-3 py-2 text-sm uppercase text-white shadow-md">
-            Just In!
-          </div>
-        )}
-        <LikeButton className="absolute right-2 top-2" />
-        <Link
-          className="h-[250px] w-full lg:h-[220px]"
-          href={`/products/${product.slug}`}
-        >
-          <Image
-            src={product.coverImage}
-            alt={`${product.shoeName} cover photo`}
-            className="h-full w-full object-cover object-bottom"
-          />
-        </Link>
+      <div className="h-[250px] w-full bg-gray-200 overflow-hidden rounded-2xl lg:h-[220px] 2xl:h-[300px]">
+        <Image
+          src={image_url}
+          alt={name}
+          className="h-full w-full object-cover object-bottom"
+          width={400}
+          height={400}
+        />
       </div>
       <div className="mt-3">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold">{product.shoeName}</h3>
-          <p
-            className={`text-neutral-500 ${
-              showPrevPrice ? 'block' : 'hidden'
-            } text-sm line-through`}
-          >
-            ${product.previousPrice}
-          </p>
+          <h3 className="font-semibold">{name}</h3>
         </div>
 
         <div className="flex items-center justify-between">
-          <p className="text-sm text-neutral-500">{product.shoeCategory}</p>
-          <p className="text-lg font-medium text-primary">
-            ${product.currentPrice}
-          </p>
+          <p className="text-sm text-neutral-500">{description}</p>
+          <p className="text-lg font-medium text-primary">${formattedPrice}</p>
         </div>
+      </div>
+      <div className="mt-4">
+        <button
+          onClick={handleAddToCart}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full w-full transition-colors duration-200"
+        >
+          Adicionar ao Carrinho
+        </button>
       </div>
     </div>
   );

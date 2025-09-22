@@ -1,117 +1,75 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { AiOutlineDelete } from 'react-icons/ai';
-import { MdStar } from 'react-icons/md';
-import { TbBrandPaypal } from 'react-icons/tb';
+'use client';
 
-import LikeButton from '@/components/LikeButton';
-import { shoes } from '@/data/content';
-import type { ProductType } from '@/data/types';
-import ButtonPrimary from '@/shared/Button/ButtonPrimary';
-import ButtonSecondary from '@/shared/Button/ButtonSecondary';
-import InputNumber from '@/shared/InputNumber/InputNumber';
-
-const renderProduct = (item: ProductType) => {
-  const { shoeName, coverImage, currentPrice, slug, rating, shoeCategory } =
-    item;
-
-  return (
-    <div key={shoeName} className="flex py-5 last:pb-0">
-      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl md:h-40 md:w-40">
-        <Image
-          fill
-          src={coverImage}
-          alt={shoeName}
-          className="h-full w-full object-contain object-center"
-        />
-        <Link className="absolute inset-0" href={`/products/${slug}`} />
-      </div>
-
-      <div className="ml-4 flex flex-1 flex-col justify-between">
-        <div>
-          <div className="flex justify-between ">
-            <div>
-              <h3 className="font-medium md:text-2xl ">
-                <Link href={`/products/${slug}`}>{shoeName}</Link>
-              </h3>
-              <span className="my-1 text-sm text-neutral-500">
-                {shoeCategory}
-              </span>
-              <div className="flex items-center gap-1">
-                <MdStar className="text-yellow-400" />
-                <span className="text-sm">{rating}</span>
-              </div>
-            </div>
-            <span className="font-medium md:text-xl">${currentPrice}</span>
-          </div>
-        </div>
-        <div className="flex w-full items-end justify-between text-sm">
-          <div className="flex items-center gap-3">
-            <LikeButton />
-            <AiOutlineDelete className="text-2xl" />
-          </div>
-          <div>
-            <InputNumber />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+import { useCartStore } from '@/store/cartStore';
+import CartItem from '@/components/CartItem';
+import { ShoppingBag, Frown } from 'lucide-react';
+import React from 'react';
 
 const CartPage = () => {
+  const { cart, totalPrice } = useCartStore();
+
+  if (cart.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center text-center min-h-[60vh] text-white">
+        <Frown size={64} className="text-neutral-500 mb-4" />
+        <h1 className="text-3xl font-bold mb-2">Seu carrinho está vazio</h1>
+        <p className="text-neutral-400 max-w-sm">
+          Parece que você ainda não adicionou nenhum item. Explore nossos produtos e encontre algo que você ame!
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="nc-CartPage">
-      <main className="container py-16 lg:pb-28 lg:pt-20 ">
-        <div className="mb-14">
-          <h2 className="block text-2xl font-medium sm:text-3xl lg:text-4xl">
-            Your Cart
-          </h2>
-        </div>
-
-        <hr className="my-10 border-neutral-300 xl:my-12" />
-
-        <div className="flex flex-col lg:flex-row">
-          <div className="w-full divide-y divide-neutral-300 lg:w-[60%] xl:w-[55%]">
-            {shoes.slice(0, 3).map((item) => renderProduct(item))}
+    <main className="container mx-auto px-4 py-12 lg:py-16">
+      <div className="flex items-center gap-4 mb-8">
+        <ShoppingBag size={32} className="text-purple-400" />
+        <h1 className="text-3xl lg:text-4xl font-extrabold text-white">Seu Carrinho</h1>
+      </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-12">
+        <section className="lg:col-span-2">
+          <div className="space-y-6">
+            {cart.map(item => (
+              <CartItem key={item.id} item={item} />
+            ))}
           </div>
-          <div className="my-10 shrink-0 border-t border-neutral-300 lg:mx-10 lg:my-0 lg:border-l lg:border-t-0 xl:mx-16 2xl:mx-20" />
-          <div className="flex-1">
-            <div className="sticky top-28">
-              <h3 className="text-2xl font-semibold">Summary</h3>
-              <div className="mt-7 divide-y divide-neutral-300 text-sm">
-                <div className="flex justify-between pb-4">
-                  <span>Subtotal</span>
-                  <span className="font-semibold">$249.00</span>
-                </div>
-                <div className="flex justify-between py-4">
-                  <span>Estimated Delivery & Handling</span>
-                  <span className="font-semibold">Free</span>
-                </div>
-                <div className="flex justify-between py-4">
-                  <span>Estimated taxes</span>
-                  <span className="font-semibold">$24.90</span>
-                </div>
-                <div className="flex justify-between pt-4 text-base font-semibold">
-                  <span>Total</span>
-                  <span>$276.00</span>
-                </div>
+        </section>
+
+        <aside className="lg:col-span-1 mt-10 lg:mt-0 lg:sticky lg:top-24 h-fit">
+          <div className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-6 shadow-lg backdrop-blur-sm">
+            <h2 className="text-2xl font-bold text-white mb-6">Resumo do Pedido</h2>
+            
+            <div className="space-y-3 text-neutral-300">
+              <div className="flex justify-between">
+                <span>Subtotal</span>
+                <span className="font-medium text-white">${totalPrice.toFixed(2)}</span>
               </div>
-              <ButtonPrimary href="/checkout" className="mt-8 w-full">
-                Checkout Now
-              </ButtonPrimary>
-              <ButtonSecondary
-                className="mt-3 inline-flex w-full items-center gap-1 border-2 border-primary text-primary"
-                href="/checkout"
-              >
-                <TbBrandPaypal className="text-2xl" />
-                PayPal
-              </ButtonSecondary>
+              <div className="flex justify-between">
+                <span>Frete</span>
+                <span className="font-medium text-green-400">Grátis</span>
+              </div>
             </div>
+            
+            <div className="my-5 h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent"></div>
+            
+            <div className="flex justify-between text-white font-bold text-xl">
+              <span>Total</span>
+              <span>${totalPrice.toFixed(2)}</span>
+            </div>
+            
+            <button 
+              className="group relative w-full mt-6 inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 p-0.5 font-medium text-white transition-all hover:from-purple-700 hover:to-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-800"
+            >
+              <span className="relative w-full rounded-md bg-neutral-900 px-5 py-3 transition-all duration-75 ease-in group-hover:bg-opacity-0">
+                Finalizar Compra
+              </span>
+            </button>
           </div>
-        </div>
-      </main>
-    </div>
+        </aside>
+
+      </div>
+    </main>
   );
 };
 
