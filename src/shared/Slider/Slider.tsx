@@ -7,7 +7,6 @@ import { useWindowSize } from 'react-use';
 import NextBtn from '@/shared/NextPrev/NextBtn';
 import PrevBtn from '@/shared/NextPrev/PrevBtn';
 import { variants } from '@/utils/animationVariants';
-
 export interface MySliderProps<T> {
   className?: string;
   itemPerRow?: number;
