@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { createClient } from '@/components/clients/nextjs/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import {
   Card,

@@ -5,7 +5,8 @@ import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import { FaRegBell } from 'react-icons/fa6';
 import { RiSearch2Line } from 'react-icons/ri';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+// 1. Importando a função correta
+import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
 
@@ -18,7 +19,8 @@ import MenuBar from './MenuBar';
 
 const MainNav = () => {
   const [user, setUser] = useState<User | null>(null);
-  const supabase = createClientComponentClient();
+  // 2. Criando o cliente da forma padronizada
+  const supabase = createClient();
   const router = useRouter();
 
   useEffect(() => {

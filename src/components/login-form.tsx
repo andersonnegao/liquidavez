@@ -1,7 +1,8 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { createClient } from '@/components/'
+// CAMINHO CORRIGIDO AQUI
+import { createClient } from '@/lib/supabase/client' 
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -35,7 +36,6 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
         password,
       })
       if (error) throw error
-      // Update this route to redirect to an authenticated route. The user already has an active session.
       router.push('/protected')
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : 'An error occurred')
@@ -45,6 +45,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
   }
 
   return (
+    // ... (o resto do componente continua igual)
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader>

@@ -55,5 +55,5 @@
     ".storybook/*.ts",
     ".next/types/**/*.ts",
     "src/libs/Env.mjs"
-, "src/app/auth/page.txs"  ]
+, "src/app/auth/page.tsx"  ]
 }

@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import ProductCard from '@/components/ProductCard';
-import { supabase } from '../utils/supabase';
+import { createClient } from '@/lib/supabase/client'; // ESTE É O CAMINho CORRETO
 
+// Interface do produto
 interface Product {
   id: string;
   name: string;
@@ -17,6 +18,9 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // A instância do Supabase deve ser criada aqui dentro
+    const supabase = createClient();
+
     const fetchData = async () => {
       const { data, error } = await supabase.from('products').select();
 
@@ -63,7 +67,7 @@ export default function HomePage() {
           ))}
         </div>
       ) : (
-        <p className="text-red-500">Não foi possível conectar ou não há produtos na tabela.</p>
+        <p className="text-red-500">Não foi possível conectar ou não há produtos na tabela. Verifique a política RLS no Supabase.</p>
       )}
     </div>
   );
