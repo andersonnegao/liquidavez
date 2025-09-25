@@ -1,93 +1,124 @@
-'use-client';
+'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
+import { useState } from 'react';
 import { useCartStore } from '@/store/cartStore';
-import { X, Plus, Minus } from 'lucide-react'; // Ícones para um visual mais limpo
+import CartItem from '@/components/CartItem';
+import ContactInfo from './ContactInfo';
+import ShippingAddress from './ShippingAddress';
+import PaymentMethod from './PaymentMethod';
 
-interface CartItemProps {
-  item: {
-    id: string;
-    name: string;
-    description?: string;
-    price: number;
-    image_url: string;
-    quantity: number;
-  };
-}
+export default function CheckoutPage() {
+  const { cart, totalPrice } = useCartStore();
+  const [currentStep, setCurrentStep] = useState(1);
 
-const CartItem: React.FC<CartItemProps> = ({ item }) => {
-  const { increaseQuantity, decreaseQuantity, removeFromCart } = useCartStore();
+  if (cart.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-black via-purple-900/20 to-black flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-white mb-4">Carrinho Vazio</h1>
+          <p className="text-neutral-400 mb-8">Adicione alguns produtos ao seu carrinho para continuar.</p>
+          <a 
+            href="/products" 
+            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg transition-colors"
+          >
+            Ver Produtos
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  const steps = [
+    { id: 1, title: 'Informações de Contato', component: ContactInfo },
+    { id: 2, title: 'Endereço de Entrega', component: ShippingAddress },
+    { id: 3, title: 'Método de Pagamento', component: PaymentMethod },
+  ];
+
+  const CurrentStepComponent = steps.find(step => step.id === currentStep)?.component || ContactInfo;
 
   return (
-    // CARD PRINCIPAL: Efeito de vidro fosco (glassmorphism) com borda gradiente sutil
-    <div className="group relative flex items-center gap-4 rounded-xl border border-white/10 bg-white/5 p-4 shadow-lg backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:bg-white/10">
-      
-      {/* IMAGEM: Efeito de "flutuar" no hover e sombra colorida */}
-      <div className="relative h-28 w-28 flex-shrink-0">
-        <div className="absolute -inset-2 rounded-full bg-purple-500/30 opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100"></div>
-        <Link href={`/products/${item.id}`} className="relative z-10 block h-full w-full">
-          <Image
-            src={item.image_url}
-            alt={item.name}
-            className="h-full w-full rounded-lg object-contain transition-transform duration-500 group-hover:scale-110"
-            width={112}
-            height={112}
-          />
-        </Link>
-      </div>
-
-      {/* INFORMAÇÕES DO PRODUTO */}
-      <div className="flex flex-1 flex-col gap-1">
-        <div className="flex items-start justify-between">
-          <div className="flex flex-col">
-            <h3 className="text-lg font-bold text-white transition-colors hover:text-purple-400">
-              <Link href={`/products/${item.id}`}>{item.name}</Link>
-            </h3>
-            <p className="text-xs text-neutral-400">
-              {item.description || 'Edição Limitada'}
-            </p>
-          </div>
-          <span className="whitespace-nowrap pl-4 text-xl font-black text-purple-400">
-            ${item.price.toFixed(2)}
-          </span>
-        </div>
-
-        {/* CONTROLES: Quantidade e Remover */}
-        <div className="mt-2 flex items-center justify-between">
-          {/* Botões de Quantidade com novo estilo */}
-          <div className="flex items-center rounded-full border border-neutral-700 bg-neutral-900/50 p-1">
-            <button
-              onClick={() => decreaseQuantity(item.id)}
-              className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-purple-500/20 hover:text-white"
-              aria-label="Diminuir quantidade"
-            >
-              <Minus size={16} />
-            </button>
-            <span className="w-10 text-center text-base font-medium text-white">
-              {item.quantity}
-            </span>
-            <button
-              onClick={() => increaseQuantity(item.id)}
-              className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-purple-500/20 hover:text-white"
-              aria-label="Aumentar quantidade"
-            >
-              <Plus size={16} />
-            </button>
+    <div className="min-h-screen bg-gradient-to-br from-black via-purple-900/20 to-black py-8">
+      <div className="container mx-auto px-4">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-4xl font-bold text-white mb-8 text-center">Finalizar Compra</h1>
+          
+          {/* Progress Steps */}
+          <div className="flex justify-center mb-8">
+            <div className="flex items-center space-x-4">
+              {steps.map((step, index) => (
+                <div key={step.id} className="flex items-center">
+                  <div 
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                      currentStep >= step.id 
+                        ? 'bg-purple-600 text-white' 
+                        : 'bg-neutral-700 text-neutral-400'
+                    }`}
+                  >
+                    {step.id}
+                  </div>
+                  <span className={`ml-2 text-sm ${
+                    currentStep >= step.id ? 'text-white' : 'text-neutral-400'
+                  }`}>
+                    {step.title}
+                  </span>
+                  {index < steps.length - 1 && (
+                    <div className={`w-8 h-0.5 ml-4 ${
+                      currentStep > step.id ? 'bg-purple-600' : 'bg-neutral-700'
+                    }`} />
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Botão de Remover (agora um ícone) */}
-          <button
-            onClick={() => removeFromCart(item.id)}
-            className="absolute top-3 right-3 z-20 flex h-7 w-7 items-center justify-center rounded-full bg-black/30 text-neutral-400 opacity-50 transition-all duration-300 hover:bg-red-500/50 hover:text-white hover:opacity-100 group-hover:opacity-100"
-            aria-label="Remover item do carrinho"
-          >
-            <X size={16} />
-          </button>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Main Content */}
+            <div className="lg:col-span-2">
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-6">
+                <CurrentStepComponent />
+                
+                {/* Navigation Buttons */}
+                <div className="flex justify-between mt-8">
+                  <button
+                    onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
+                    disabled={currentStep === 1}
+                    className="px-6 py-3 bg-neutral-700 text-white rounded-lg hover:bg-neutral-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Voltar
+                  </button>
+                  <button
+                    onClick={() => setCurrentStep(Math.min(steps.length, currentStep + 1))}
+                    disabled={currentStep === steps.length}
+                    className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {currentStep === steps.length ? 'Finalizar' : 'Próximo'}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Order Summary */}
+            <div className="lg:col-span-1">
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-6 sticky top-8">
+                <h2 className="text-2xl font-bold text-white mb-6">Resumo do Pedido</h2>
+                
+                <div className="space-y-4 mb-6">
+                  {cart.map((item) => (
+                    <CartItem key={item.id} item={item} />
+                  ))}
+                </div>
+
+                <div className="border-t border-white/10 pt-4">
+                  <div className="flex justify-between items-center text-lg font-bold text-white">
+                    <span>Total:</span>
+                    <span className="text-purple-400">${totalPrice.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default CartItem;
+}
