@@ -34,7 +34,7 @@ export default function CartButton() {
       component={Link}
       href="/checkout/revieworder"
       leftIcon={<IconShoppingCart size={20} />}
-      color="cyan.6"
+      color="fire"
       loading={!total}
       loaderPosition="right"
     >

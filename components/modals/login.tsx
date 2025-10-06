@@ -69,7 +69,7 @@ export default function LoginModal() {
           <Text>
             Don&apos;t have an account?{" "}
             <Anchor
-              color="cyan.6"
+              color="fire"
               onClick={() => {
                 openModal({
                   modalId: "register-one",
@@ -84,7 +84,7 @@ export default function LoginModal() {
           </Text>
           <Button
             type="submit"
-            color="cyan.6"
+            color="fire"
             loading={loading}
             loaderPosition="right"
           >

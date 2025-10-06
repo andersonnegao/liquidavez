@@ -21,12 +21,16 @@ export default function Footer() {
       <div className="sm:py-18 container mx-auto px-3 py-10">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">
-            <NextLink className="inline-block hover:no-underline" href="/">
-              <h3 className="text-4xl font-extrabold">
-                <span className="bg-gradient-to-r from-sky-400 to-emerald-600 bg-clip-text text-transparent">
-                  Grocery
-                </span>
-              </h3>
+            <NextLink className="inline-block hover:no-underline flex items-center gap-3" href="/">
+              <div className="flex items-center gap-3">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                  <path d="M12 2C12 2 16 6 16 10C16 14 12 16 12 20C12 20 8 16 8 13C8 10 12 6 12 2Z" fill="#ff5f1f"/>
+                  <path d="M12 6C12 6 14 8 14 10C14 12 12 13 12 15C12 15 10 13 10 12C10 11 12 9 12 6Z" fill="#ffb487"/>
+                </svg>
+                <h3 className="text-2xl font-extrabold">
+                  <span className="brand-gradient">liquidavez</span>
+                </h3>
+              </div>
             </NextLink>
             <div className="flex space-x-5">
               <a href="#" className="opacity-60 transition hover:opacity-100">
@@ -112,7 +116,7 @@ export default function Footer() {
           <p>&copy; Grocery New Zealand Limited {new Date().getFullYear()}</p>
 
           <Switch
-            color="cyan.6"
+            color="fire.6"
             checked={colorScheme === "dark"}
             onChange={() => toggleColorScheme()}
             size="lg"

@@ -114,8 +114,12 @@ export default function Payment({ user }: PageProps) {
                     >
                       <div className="flex space-x-10 items-center">
                         <Image
-                          src={`${process.env.NEXT_PUBLIC_SUPABASE_BUCKET}${product.sku}/${product.sku}.jpg`}
-                          alt={product.name!}
+                          src={
+                            process.env.NEXT_PUBLIC_SUPABASE_BUCKET
+                              ? `${process.env.NEXT_PUBLIC_SUPABASE_BUCKET.replace(/\/$/, '')}/${product.sku}/${product.sku}.jpg`
+                              : '/no-image.png'
+                          }
+                          alt={product.name ?? 'Product image'}
                           width={85}
                           height={85}
                         />
@@ -157,10 +161,10 @@ export default function Payment({ user }: PageProps) {
 
                   <Button
                     onClick={() => push('/checkout/revieworder')}
-                    color="cyan.6"
+                    color="fire"
                     variant="outline"
                   >
-                    Return to cart
+                    Voltar ao carrinho
                   </Button>
                 </div>
               </Paper>

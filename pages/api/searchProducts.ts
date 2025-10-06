@@ -104,31 +104,38 @@ export default async function handler(req: NextRequest, res: NextResponse) {
       .throwOnError();
 
     // manually set the shelf category
+    const first = data && data.length > 0 ? data[0] : null;
     categories = [
       {
-        name: data?.[0]?.shelf.name,
-        slug: data?.[0]?.shelf.slug,
+        name: first?.shelf?.name ?? null,
+        slug: first?.shelf?.slug ?? null,
         products: data,
       },
     ];
 
-    departmentBreadcrumbs = {
-      category: 'department',
-      name: data?.[0]?.department.name,
-      slug: data?.[0]?.department.slug,
-    };
+    departmentBreadcrumbs = first
+      ? {
+          category: 'department',
+          name: (first.department as any)?.name ?? null,
+          slug: (first.department as any)?.slug ?? null,
+        }
+      : undefined;
 
-    aisleBreadcrumbs = {
-      category: 'aisle',
-      name: data?.[0]?.aisle.name,
-      slug: data?.[0]?.aisle.slug,
-    };
+    aisleBreadcrumbs = first
+      ? {
+          category: 'aisle',
+          name: (first.aisle as any)?.name ?? null,
+          slug: (first.aisle as any)?.slug ?? null,
+        }
+      : undefined;
 
-    shelfBreadcrumbs = {
-      category: 'shelf',
-      name: data?.[0]?.shelf.name,
-      slug: data?.[0]?.shelf.slug,
-    };
+    shelfBreadcrumbs = first
+      ? {
+          category: 'shelf',
+          name: first.shelf?.name ?? null,
+          slug: first.shelf?.slug ?? null,
+        }
+      : undefined;
   } else if (aisle) {
     const { data } = await supabase
       .from('shelf')
@@ -142,17 +149,23 @@ export default async function handler(req: NextRequest, res: NextResponse) {
 
     categories = data;
 
-    departmentBreadcrumbs = {
-      category: 'department',
-      name: data?.[0]?.aisle.department.name,
-      slug: data?.[0]?.aisle.department.slug,
-    };
+    const first = data && data.length > 0 ? data[0] : null;
 
-    aisleBreadcrumbs = {
-      category: 'aisle',
-      name: data?.[0]?.aisle.name,
-      slug: data?.[0]?.aisle.slug,
-    };
+    departmentBreadcrumbs = first
+      ? {
+          category: 'department',
+          name: (first.aisle as any)?.department?.name ?? null,
+          slug: (first.aisle as any)?.department?.slug ?? null,
+        }
+      : undefined;
+
+    aisleBreadcrumbs = first
+      ? {
+          category: 'aisle',
+          name: (first.aisle as any)?.name ?? null,
+          slug: (first.aisle as any)?.slug ?? null,
+        }
+      : undefined;
   } else if (department) {
     // get all aisles for this department and search term
     const { data } = await supabase
@@ -164,12 +177,15 @@ export default async function handler(req: NextRequest, res: NextResponse) {
       .throwOnError();
 
     categories = data;
+    const first = data && data.length > 0 ? data[0] : null;
 
-    departmentBreadcrumbs = {
-      category: 'department',
-      name: data?.[0]?.department.name,
-      slug: data?.[0]?.department.slug,
-    };
+    departmentBreadcrumbs = first
+      ? {
+          category: 'department',
+          name: (first.department as any)?.name ?? null,
+          slug: (first.department as any)?.slug ?? null,
+        }
+      : undefined;
   } else {
     const { data } = await supabase
       .from('department')

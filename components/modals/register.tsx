@@ -21,7 +21,7 @@ import useRegisterForm from "@/src/hooks/useRegisterForm";
 
 export function RegisterStepperOne() {
   return (
-    <Stepper color="cyan.6" active={0} breakpoint="sm">
+  <Stepper color="fire" active={0} breakpoint="sm">
       <Stepper.Step
         label="Step 1"
         description="Create an account"
@@ -98,14 +98,14 @@ export default function RegisterModal() {
         <Group position="right">
           <Button
             onClick={() => closeModal("register-one")}
-            color="cyan.6"
+            color="fire"
             variant="subtle"
           >
             Back
           </Button>
           <Button
             type="submit"
-            color="cyan.6"
+            color="fire"
             loading={loading}
             loaderPosition="right"
           >

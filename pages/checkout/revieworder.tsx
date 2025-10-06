@@ -160,8 +160,12 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
             >
               <div className="flex items-center space-x-10">
                 <Image
-                  src={`${process.env.NEXT_PUBLIC_SUPABASE_BUCKET}${product.sku}/${product.sku}.jpg`}
-                  alt={product.name!}
+                  src={
+                    process.env.NEXT_PUBLIC_SUPABASE_BUCKET
+                      ? `${process.env.NEXT_PUBLIC_SUPABASE_BUCKET.replace(/\/$/, '')}/${product.sku}/${product.sku}.jpg`
+                      : '/no-image.png'
+                  }
+                  alt={product.name ?? 'Product image'}
                   width={85}
                   height={85}
                 />
@@ -208,13 +212,13 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
 
             <Text className="space-x-3 font-semibold">
               <span className="font-normal">
-                <Button
-                  onClick={() => setAddressOpened(true)}
-                  color="cyan.6"
-                  variant="outline"
-                >
-                  Change address
-                </Button>
+                  <Button
+                    onClick={() => setAddressOpened(true)}
+                    color="fire"
+                    variant="outline"
+                  >
+                    Alterar endereço
+                  </Button>
               </span>
             </Text>
           </div>
@@ -240,12 +244,12 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
       <Paper shadow="xs" p="md">
         <div className="flex justify-between">
           <div className="space-x-3">
-            <Button onClick={() => push("/")} color="cyan.6" variant="outline">
-              Continue shopping
-            </Button>
-            <Button onClick={() => setClearCartOpened(true)} color="red">
-              Clear cart
-            </Button>
+              <Button onClick={() => push("/")} color="fire" variant="outline">
+                Continuar comprando
+              </Button>
+              <Button onClick={() => setClearCartOpened(true)} color="fire">
+                Limpar carrinho
+              </Button>
           </div>
 
           <Button
@@ -254,9 +258,9 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
                 ? () => push("/checkout/payment")
                 : () => setEmptyCartOpened(true)
             }
-            color={"cyan.6"}
+          color={"fire"}
           >
-            Payment
+          Pagar
           </Button>
         </div>
       </Paper>
@@ -284,7 +288,7 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
 
                   <Button
                     onClick={() => changeAddress(address.id)}
-                    color="cyan.6"
+                    color="fire"
                     disabled={selectedAddress.id == address.id}
                   >
                     Change
@@ -303,7 +307,7 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
         <Stack>
           <Text>All items will be removed from your cart.</Text>
           <Group>
-            <Button onClick={clear} color="cyan.6">
+            <Button onClick={clear} color="fire">
               Yes, clear cart
             </Button>
             <Button onClick={() => setClearCartOpened(false)} color={"red.8"}>

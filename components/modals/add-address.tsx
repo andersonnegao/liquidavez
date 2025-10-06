@@ -77,7 +77,7 @@ export default function AddAddressModal({ user, setAddresses }: PageProps) {
           loading={loading}
           loaderPosition="right"
           disabled={!selectedAddress.length}
-          color="cyan.6"
+          color="fire"
         >
           Add address
         </Button>

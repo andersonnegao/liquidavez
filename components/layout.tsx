@@ -10,10 +10,10 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <>
       <Head>
-        <title>Online Grocery Shopping - Grocery</title>
+        <title>liquidavez — Mercado online</title>
         <meta
           name="description"
-          content="Online grocery shopping with Grocery"
+          content="Compre mantimentos online com rapidez e entrega local"
         />
       </Head>
       <Box

@@ -60,7 +60,7 @@ export default function HeaderDepartments() {
         <Menu.Target>
           <Button
             size="md"
-            color="cyan.6"
+            color="fire"
             leftIcon={<IconCircleArrowDownFilled size={20} />}
           >
             Browse

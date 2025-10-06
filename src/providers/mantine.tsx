@@ -9,11 +9,11 @@ import {
 import { NotificationsProvider } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
 
-import { Mulish } from "next/font/google";
+import { Inter } from "next/font/google";
 
-const mulish = Mulish({
-  weight: ["400", "500", "600", "700", "800", "900"],
+const inter = Inter({
   subsets: ["latin"],
+  weight: ["400", "600", "700", "800"],
 });
 
 export default function CustomMantineProvider({
@@ -21,7 +21,8 @@ export default function CustomMantineProvider({
 }: {
   children: JSX.Element;
 }) {
-  const [colorScheme, setColorScheme] = useState<ColorScheme>("light");
+  // Iniciamos em modo escuro para dar ao site um visual mais moderno e de alta-contraste
+  const [colorScheme, setColorScheme] = useState<ColorScheme>("dark");
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
   const emotionCache = createEmotionCache({ key: "mantine", prepend: false });
@@ -37,22 +38,36 @@ export default function CustomMantineProvider({
         emotionCache={emotionCache}
         theme={{
           colorScheme,
+          primaryColor: 'fire',
+          primaryShade: 5,
           colors: {
+            fire: [
+              '#fff7f0',
+              '#ffefe1',
+              '#ffd2b8',
+              '#ffb487',
+              '#ff8b4d',
+              '#ff5f1f',
+              '#e64f18',
+              '#b43a10',
+              '#8a2b0c',
+              '#5e1b05',
+            ],
             dark: [
-              "#E2E8F0",
-              "#A6A7AB",
-              "#909296",
-              "#5c5f66",
-              "#373A40",
-              "#2C2E33",
-              "rgb(31 41 55)",
-              "rgb(17 24 39)",
-              "#141517",
-              "#101113",
+              '#E2E8F0',
+              '#A6A7AB',
+              '#909296',
+              '#5c5f66',
+              '#373A40',
+              '#2C2E33',
+              'rgb(31 41 55)',
+              'rgb(17 24 39)',
+              '#141517',
+              '#101113',
             ],
           },
-          fontFamily: mulish.style.fontFamily,
-          headings: { fontFamily: mulish.style.fontFamily },
+          fontFamily: inter.style.fontFamily,
+          headings: { fontFamily: inter.style.fontFamily },
         }}
       >
         <NotificationsProvider position="top-center" limit={5}>

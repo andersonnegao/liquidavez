@@ -57,8 +57,8 @@ export default function Header() {
             <div className="my-3 flex items-center justify-between">
               <Link href="/">
                 <h1 className="text-4xl font-extrabold">
-                  <span className="bg-gradient-to-r from-sky-400 to-emerald-600 bg-clip-text text-transparent">
-                    Grocery
+                  <span className="brand-gradient">
+                    liquidavez
                   </span>
                 </h1>
               </Link>
@@ -87,7 +87,7 @@ export default function Header() {
                     onItemSubmit={(item) => {
                       push(`/shop/search?q=${item.value}`);
                     }}
-                    placeholder="Search Groceries"
+                    placeholder="Buscar produtos"
                     data={[
                       "Milk",
                       "Bread",

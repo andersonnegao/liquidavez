@@ -132,7 +132,7 @@ export default function ManageAccount({ user }: PageProps) {
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 required
               />
-              <Button onClick={updateDetails} color="cyan.6" fullWidth>
+              <Button onClick={updateDetails} color="fire" fullWidth>
                 Update details
               </Button>
             </Group>
@@ -155,7 +155,7 @@ export default function ManageAccount({ user }: PageProps) {
               />
               <Button
                 onClick={updateEmail}
-                color="cyan.6"
+                color="fire"
                 disabled={email === oldEmail}
                 fullWidth
               >
@@ -169,7 +169,7 @@ export default function ManageAccount({ user }: PageProps) {
               <Button
                 component={Link}
                 href="/account/forgotpassword"
-                color="cyan.6"
+                color="fire"
                 fullWidth
               >
                 Reset password

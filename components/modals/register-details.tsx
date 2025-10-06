@@ -24,7 +24,7 @@ import useRegisterDetailsForm from "@/components/modals/useRegisterDetailsForm";
 
 export function RegisterStepperTwo() {
   return (
-    <Stepper color="cyan.6" active={1} breakpoint="sm">
+  <Stepper color="fire" active={1} breakpoint="sm">
       <Stepper.Step
         onClick={() => alert("test")}
         label="Step 1"
@@ -180,14 +180,14 @@ export default function RegisterDetailsModal() {
         <Group position="right">
           <Button
             onClick={() => closeModal("register-two")}
-            color="cyan.6"
+            color="fire"
             variant="subtle"
           >
             Back
           </Button>
           <Button
             type="submit"
-            color="cyan.6"
+            color="fire"
             loading={loading}
             loaderPosition="right"
           >

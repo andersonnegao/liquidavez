@@ -28,7 +28,7 @@ export default function ProductPagination({
         onChange={(e) => setSettings({ page: e })}
         total={pageCount}
         boundaries={1}
-        color="cyan.6"
+  color="fire"
       />
       <Select
         label="Items"

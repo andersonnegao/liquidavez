@@ -49,25 +49,28 @@ export default function ProductCard({
     >
       <Card.Section className="mb-3 bg-white p-5">
         <NextLink href={`/shop/product/${sku}`}>
-          <Skeleton height={160} radius={0} visible={!imageLoaded}>
-            <Image
-              src={`${
-                errorImage ??
-                `${process.env.NEXT_PUBLIC_SUPABASE_BUCKET}/${sku}/${sku}.jpg`
-              }`}
-              alt={name!}
-              width={160}
-              height={160}
-              priority={priority}
-              className={`mx-auto ${
-                imageLoaded ? "opacity-100" : "opacity-0"
-              } transition-opacity duration-500`}
-              onLoadingComplete={() => setImageLoaded(true)}
-              onError={() => {
-                setErrorImage("/no-image.png");
-              }}
-            />
-          </Skeleton>
+            <Skeleton height={160} radius={0} visible={!imageLoaded}>
+              <Image
+                src={
+                  errorImage ??
+                  (process.env.NEXT_PUBLIC_SUPABASE_BUCKET
+                    ? `${process.env.NEXT_PUBLIC_SUPABASE_BUCKET.replace(/\/$/, '')}/${sku}/${sku}.jpg`
+                    : '/no-image.png')
+                }
+                alt={name ?? 'Product image'}
+                width={160}
+                height={160}
+                priority={priority}
+                className={`mx-auto ${
+                  imageLoaded ? 'opacity-100' : 'opacity-0'
+                } transition-opacity duration-500`}
+                onLoadingComplete={() => setImageLoaded(true)}
+                onError={() => {
+                  // next/image doesn't always call onError in older Next versions
+                  setErrorImage('/no-image.png');
+                }}
+              />
+            </Skeleton>
         </NextLink>
       </Card.Section>
 

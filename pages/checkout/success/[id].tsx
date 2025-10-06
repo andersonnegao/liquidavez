@@ -147,8 +147,12 @@ export default function OrderSuccess({ order, status }: PageProps) {
                   <td>
                     <div className="flex space-x-10 items-center">
                       <Image
-                        src={`${process.env.NEXT_PUBLIC_SUPABASE_BUCKET}/${order.products.sku}/${order.products.sku}.jpg`}
-                        alt={order.products.name}
+                        src={
+                          process.env.NEXT_PUBLIC_SUPABASE_BUCKET
+                            ? `${process.env.NEXT_PUBLIC_SUPABASE_BUCKET.replace(/\/$/, '')}/${order.products.sku}/${order.products.sku}.jpg`
+                            : '/no-image.png'
+                        }
+                        alt={order.products.name ?? 'Product image'}
                         width={85}
                         height={85}
                         className="hidden md:block"
@@ -179,7 +183,7 @@ export default function OrderSuccess({ order, status }: PageProps) {
 
         <div className="flex justify-between pt-5 mt-5 bg-white">
           <div className="space-x-3">
-            <Button onClick={() => push('/')} color="cyan.6">
+                <Button onClick={() => push('/')} color="fire">
               Return home
             </Button>
           </div>

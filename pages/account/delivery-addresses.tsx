@@ -110,7 +110,7 @@ export default function DeliveryAddresses({ user, user_addresses }: PageProps) {
                   ),
                 });
               }}
-              color="cyan.6"
+              color="fire"
               fullWidth
             >
               Add a new address

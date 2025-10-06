@@ -126,12 +126,16 @@ export default function Product({
                     visible={!imageLoaded}
                   >
                     <Image
-                      src={`${process.env.NEXT_PUBLIC_SUPABASE_BUCKET}${image.name}`}
+                      src={
+                        process.env.NEXT_PUBLIC_SUPABASE_BUCKET
+                          ? `${process.env.NEXT_PUBLIC_SUPABASE_BUCKET.replace(/\/$/, '')}/${(image.name ?? '').toString().replace(/^\//, '')}`
+                          : '/no-image.png'
+                      }
                       width={500}
                       height={500}
-                      alt={image.name!}
+                      alt={image.name ?? 'Product image'}
                       className={`mx-auto ${
-                        imageLoaded ? "opacity-100" : "opacity-0"
+                        imageLoaded ? 'opacity-100' : 'opacity-0'
                       } transition-opacity duration-500`}
                       onLoadingComplete={() => setImageLoaded(true)}
                     />

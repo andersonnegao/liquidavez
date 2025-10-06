@@ -30,11 +30,11 @@ export default function Quantity({ product }: { product: products }) {
       {quantity === 0 ? (
         <Button
           onClick={() => addToCart(product)}
-          color="dark.5"
+          color="fire"
           fullWidth
           radius="xl"
         >
-          Add to cart
+          Adicionar ao carrinho
         </Button>
       ) : (
         <Group spacing={0} noWrap>
@@ -52,7 +52,7 @@ export default function Quantity({ product }: { product: products }) {
           />
           <Button
             onClick={() => subtractQuantity(product)}
-            color="dark.5"
+            color="fire"
             px={14}
             radius={0}
           >
@@ -60,7 +60,7 @@ export default function Quantity({ product }: { product: products }) {
           </Button>
           <Button
             onClick={() => addQuantity(product)}
-            color="dark.5"
+            color="fire"
             px={14}
             styles={{
               root: { borderRadius: "0px 32px 32px 0px" },
