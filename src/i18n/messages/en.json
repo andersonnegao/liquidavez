@@ -1,0 +1,14 @@
+{
+  "Header": {
+    "searchPlaceholder": "Search products"
+  },
+  "HeaderDepartments": {
+    "browse": "Browse",
+    "menuLabel": "Departments"
+  },
+  "LocaleSwitcher": {
+    "label": "Select language",
+    "english": "English",
+    "portuguese": "Portuguese"
+  }
+}

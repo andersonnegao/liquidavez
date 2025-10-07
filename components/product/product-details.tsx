@@ -57,7 +57,7 @@ export default function ProductDetails({ product }: ProductDetails) {
     } else {
       setQuantity(0);
     }
-  }, [cart]);
+  }, [cart, sku]);
 
   const [quantity, setQuantity] = useState(0);
   const handlers = useRef<NumberInputHandlers>();

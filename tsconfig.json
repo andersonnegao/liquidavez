@@ -20,7 +20,8 @@
       "@/types/*": ["./types/*"],
       "@/prisma/*": ["./prisma/*"],
       "@/__tests__/*": ["./__tests__/*"],
-      "@/__mocks__/*": ["./__mocks__/*"]
+      "@/__mocks__/*": ["./__mocks__/*"],
+      "next-intl": ["./src/i18n/next-intl"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

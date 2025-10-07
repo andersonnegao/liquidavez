@@ -114,7 +114,7 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
   }, [cart]);
 
   async function clear() {
-    clearTrolley([]);
+    clearTrolley();
     setClearCartOpened(false);
   }
 

@@ -1,6 +1,6 @@
-import Link from 'next/link';
+import Link from "next/link";
 
-import { Button, Menu } from '@mantine/core';
+import { Button, Menu } from "@mantine/core";
 import {
   IconApple,
   IconMeat,
@@ -16,9 +16,11 @@ import {
   IconBabyBottle,
   IconPaw,
   IconCircleArrowDownFilled,
-} from '@tabler/icons-react';
+} from "@tabler/icons-react";
 
-import departments from '@/src/data/departments.json';
+import { useTranslations } from "next-intl";
+
+import departments from "@/src/data/departments.json";
 
 function DepartmentIcons({ icon }: { icon: string }) {
   switch (icon) {
@@ -54,6 +56,8 @@ function DepartmentIcons({ icon }: { icon: string }) {
 }
 
 export default function HeaderDepartments() {
+  const t = useTranslations("HeaderDepartments");
+
   return (
     <>
       <Menu withArrow shadow="md" transition="scale">
@@ -63,12 +67,12 @@ export default function HeaderDepartments() {
             color="fire"
             leftIcon={<IconCircleArrowDownFilled size={20} />}
           >
-            Browse
+            {t("browse")}
           </Button>
         </Menu.Target>
 
         <Menu.Dropdown>
-          <Menu.Label className="text-center">Departments</Menu.Label>
+          <Menu.Label className="text-center">{t("menuLabel")}</Menu.Label>
           <div className="columns-2 lg:columns-3 gap-0">
             {departments.map((department) => (
               <Menu.Item

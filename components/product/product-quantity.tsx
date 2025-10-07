@@ -23,7 +23,7 @@ export default function Quantity({ product }: { product: products }) {
     } else {
       setQuantity(0);
     }
-  }, [cart]);
+  }, [cart, product.sku]);
 
   return (
     <>
