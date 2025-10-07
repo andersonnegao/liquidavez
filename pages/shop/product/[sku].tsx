@@ -4,8 +4,7 @@ import Image from "next/image";
 import Head from "next/head";
 import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
-import { prisma } from "@/prisma/client";
-import type { objects } from "@prisma/client";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 import { Skeleton } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
@@ -14,59 +13,47 @@ import ProductsLayout from "@/components/products/products";
 import ProductDetails from "@/components/product/product-details";
 
 import capitalize from "@/src/utils/capitalize";
+import type { Database } from "@/types/supabase";
+import {
+  getProduct,
+  getProductImages,
+  type ProductDetails as ProductDetailsData,
+  type Storage,
+} from "@/src/utils/supabase";
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+type StorageObject = NonNullable<Storage>[number];
+
+type ProductPageProps = {
+  sku: string | string[] | undefined;
+  product: ProductDetailsData;
+  images: StorageObject[];
+};
+
+export const getServerSideProps: GetServerSideProps<ProductPageProps> = async (
+  ctx
+) => {
   const { sku } = ctx.query;
 
-  const data = await prisma.products.findUnique({
-    where: {
-      sku: Number(sku),
-    },
-    select: {
-      sku: true,
-      name: true,
-      price: true,
-      description: true,
-      unit: true,
-      size: true,
-      origins: true,
-      ingredients: true,
-      nutrition: true,
-      claims: true,
-      shelf_products_shelfToshelf: {
-        select: {
-          name: true,
-          slug: true,
-          aisle_shelf_aisleToaisle: {
-            select: {
-              name: true,
-              slug: true,
-              department_aisle_departmentTodepartment: {
-                select: {
-                  name: true,
-                  slug: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  });
+  const supabase = createServerSupabaseClient<Database>(ctx);
 
-  const images = await prisma.objects.findMany({
-    where: {
-      name: {
-        startsWith: sku as string,
-      },
-    },
-  });
+  const { data: product, error } = await getProduct(supabase, sku);
+
+  if (error || !product) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const { data: images } = await getProductImages(
+    supabase,
+    sku as string | undefined
+  );
 
   return {
     props: {
       sku,
-      product: JSON.parse(JSON.stringify(data)),
-      images: JSON.parse(JSON.stringify(images)),
+      product: JSON.parse(JSON.stringify(product)) as ProductDetailsData,
+      images: (images ?? []) as StorageObject[],
     },
   };
 };
@@ -76,29 +63,36 @@ export default function Product({
   images,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   /*** QUERIES ***/
-  const { name, shelf_products_shelfToshelf: shelf } = product;
-  const { aisle_shelf_aisleToaisle: aisle } = shelf;
-  const { department_aisle_departmentTodepartment: department } = aisle;
+  const productName = product.name ?? "";
+  const shelf = product.shelf?.[0];
+  const aisle = product.aisle?.[0];
+  const department = product.department?.[0];
 
   const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
     <>
       <Head>
-        <title>{"Buy " + capitalize(name)}</title>
+        <title>{"Buy " + capitalize(productName)}</title>
       </Head>
       <ProductsLayout.Breadcrumbs>
-        <Link href={`/shop/browse/${department.slug}`}>{department.name}</Link>
-        <Link href={`/shop/browse/${department.slug}/${aisle.slug}`}>
-          {aisle.name}
-        </Link>
-        <Link
-          href={`/shop/browse/${department.slug}/${aisle.slug}/${shelf.slug}`}
-        >
-          {shelf.name}
-        </Link>
+        {department?.slug && department?.name && (
+          <Link href={`/shop/browse/${department.slug}`}>{department.name}</Link>
+        )}
+        {department?.slug && aisle?.slug && aisle?.name && (
+          <Link href={`/shop/browse/${department.slug}/${aisle.slug}`}>
+            {aisle.name}
+          </Link>
+        )}
+        {department?.slug && aisle?.slug && shelf?.slug && shelf?.name && (
+          <Link
+            href={`/shop/browse/${department.slug}/${aisle.slug}/${shelf.slug}`}
+          >
+            {shelf.name}
+          </Link>
+        )}
         <Link href="#" className="capitalize">
-          {name}
+          {productName}
         </Link>
       </ProductsLayout.Breadcrumbs>
 
@@ -115,7 +109,7 @@ export default function Product({
               },
             }}
           >
-            {images.map((image: objects) => (
+            {images.map((image) => (
               <Carousel.Slide key={image.name}>
                 <div className="mx-auto w-full bg-white py-10">
                   <Skeleton

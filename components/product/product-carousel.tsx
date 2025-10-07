@@ -5,12 +5,12 @@ import { Carousel } from "@mantine/carousel";
 /*** COMPONENTS ***/
 import ProductCard from "@/components/product/product-card";
 
-import type { products } from "@prisma/client";
+import type { Products } from "@/src/utils/supabase";
 
 export default function ProductCarousel({
   products,
 }: {
-  products: products[];
+  products: Products[];
 }) {
   if (!products) {
     return (

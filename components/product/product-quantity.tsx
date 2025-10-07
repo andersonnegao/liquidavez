@@ -4,9 +4,9 @@ import { Button, NumberInput, Group, NumberInputHandlers } from "@mantine/core";
 
 import { useStore } from "@/src/state/store";
 
-import { type products } from "@prisma/client";
+import type { Products } from "@/src/utils/supabase";
 
-export default function Quantity({ product }: { product: products }) {
+export default function Quantity({ product }: { product: Products }) {
   /*** STATE ***/
   const cart = useStore((state) => state.cart);
 

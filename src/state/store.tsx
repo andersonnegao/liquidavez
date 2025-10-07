@@ -2,9 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 /*** SUPABASE ***/
-import type { Cart, User } from "@/src/utils/supabase";
-
-import { type products } from "@prisma/client";
+import type { Cart, User, Products } from "@/src/utils/supabase";
 
 type State = {
   //cart: any;
@@ -13,10 +11,10 @@ type State = {
 };
 
 type Action = {
-  addToCart: (product: products) => void;
-  removeFromCart: (product: products) => void;
-  addQuantity: (product: products) => void;
-  subtractQuantity: (product: products) => void;
+  addToCart: (product: Products) => void;
+  removeFromCart: (product: Products) => void;
+  addQuantity: (product: Products) => void;
+  subtractQuantity: (product: Products) => void;
   clearTrolley: () => void;
   setAccount: (account: State["account"]) => void;
 };

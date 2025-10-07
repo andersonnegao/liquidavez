@@ -11,26 +11,40 @@ import ProductFilter from "@/components/product/product-filter";
 import ProductPagination from "@/components/product/product-pagination";
 
 import { prisma } from "@/prisma/client";
-import { type aisle } from "@prisma/client";
+
+type DepartmentAisle = {
+  id: number;
+  name: string;
+  slug: string | null;
+  value: number;
+  department: string;
+  count: number;
+};
 
 import useCategories from "@/src/hooks/useCategories";
 
-interface Aisle extends aisle {
-  count: string;
-}
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps<{
+  aisles: DepartmentAisle[];
+  slug: string | string[] | undefined;
+  departmentName: string;
+}> = async (ctx) => {
   const { department: departmentSlug } = ctx.query;
 
   // get all aisles for this department and the product count for each of these aisles
-  const aisles: aisle[] =
-    await prisma.$queryRaw`SELECT a.id, a.name, a.slug, a.value, b.name AS department, COUNT(*)::int 
-    FROM aisle a 
-    INNER JOIN department b ON a.department = b.id 
+  const aisles =
+    (await prisma.$queryRaw`SELECT a.id, a.name, a.slug, a.value, b.name AS department, COUNT(*)::int
+    FROM aisle a
+    INNER JOIN department b ON a.department = b.id
     INNER JOIN products ON products.aisle = a.value
-    WHERE b.slug = ${departmentSlug} 
-    GROUP BY a.id, b.name 
-    ORDER BY count DESC`;
+    WHERE b.slug = ${departmentSlug}
+    GROUP BY a.id, b.name
+    ORDER BY count DESC`) as DepartmentAisle[];
+
+  if (!aisles.length) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {
@@ -47,6 +61,8 @@ export default function Department({
   departmentName,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { settings, setSettings } = useCategories();
+
+  const departmentSlug = Array.isArray(slug) ? slug[0] : slug ?? "";
 
   const { data } = useQuery({
     queryKey: [
@@ -72,16 +88,20 @@ export default function Department({
       </Head>
 
       <ProductsLayout.Breadcrumbs>
-        <NextLink href={slug}>{departmentName}</NextLink>
+        <NextLink href={`/shop/browse/${departmentSlug}`}>
+          {departmentName}
+        </NextLink>
       </ProductsLayout.Breadcrumbs>
 
       <ProductsLayout.Heading title={departmentName} data={data} />
 
       <ProductsLayout.Body>
         <ProductsLayout.Categories>
-          {aisles.map((aisle: Aisle) => (
+          {aisles.map((aisle) => (
             <li key={aisle.name}>
-              <NextLink href={`${slug}/${aisle.slug}`}>
+              <NextLink
+                href={`/shop/browse/${departmentSlug}/${aisle.slug}`}
+              >
                 {aisle.name} ({aisle.count})
               </NextLink>
             </li>
