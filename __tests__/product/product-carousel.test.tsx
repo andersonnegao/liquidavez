@@ -20,7 +20,7 @@ const Providers = ({ children }: { children: JSX.Element }) => {
 
 describe("Carousel", () => {
   it("renders carousel", async () => {
-    const mock = await prismaMock.products.findMany.mockResolvedValue(
+    const mock = await prismaMock.product.findMany.mockResolvedValue(
       productData
     );
     const data = await mock();
@@ -35,7 +35,7 @@ describe("Carousel", () => {
   it("renders next carousel page", async () => {
     const user = userEvent.setup();
 
-    const mock = await prismaMock.products.findMany.mockResolvedValue(
+    const mock = await prismaMock.product.findMany.mockResolvedValue(
       productData
     );
     const data = await mock();

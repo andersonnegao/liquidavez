@@ -1,27 +1,49 @@
-import { createMiddlewareSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-import { defaultLocale, locales } from "@/src/i18n/config";
+import type { Database } from "@/types/supabase";
+import { locales } from "@/src/i18n/config";
+
+const PROTECTED_PATHS = ["/account", "/checkout"] as const;
+
+
+function getLocalePrefix(pathname: string) {
+  const segments = pathname.split("/").filter(Boolean);
+  const potentialLocale = segments[0];
+  if (locales.includes(potentialLocale as (typeof locales)[number])) {
+    return {
+      prefix: `/${potentialLocale}`,
+      pathWithoutLocale: `/${segments.slice(1).join("/")}` || "/",
+    };
+  }
+
+  return { prefix: "", pathWithoutLocale: pathname || "/" };
+}
+
+function isProtectedPath(pathname: string) {
+  return PROTECTED_PATHS.some(
+    (protectedPath) =>
+      pathname === protectedPath || pathname.startsWith(`${protectedPath}/`)
+  );
+}
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
+  const supabase = createMiddlewareClient<Database>({ req, res });
 
-  const supabase = createMiddlewareSupabaseClient({ req, res });
-
-  // check if we have a session
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
-  if (session) return res; // if there is a session, forward request to protected route
+  const { prefix, pathWithoutLocale } = getLocalePrefix(req.nextUrl.pathname);
 
-  // if no session, redirect to login page
+  if (!isProtectedPath(pathWithoutLocale) || session) {
+    return res;
+  }
+
   const redirectUrl = req.nextUrl.clone();
-  const locale = req.nextUrl.locale ?? defaultLocale;
-
-  redirectUrl.pathname =
-    locale && locale !== defaultLocale ? `/${locale}` : "/";
+  redirectUrl.pathname = `${prefix}/login`.replace("//", "/");
 
   return NextResponse.redirect(redirectUrl);
 }
@@ -30,11 +52,9 @@ export const config = {
   matcher: [
     "/account/:path*",
     "/checkout/:path*",
-    ...locales
-      .filter((locale) => locale !== defaultLocale)
-      .flatMap((locale) => [
-        `/${locale}/account/:path*`,
-        `/${locale}/checkout/:path*`,
-      ]),
+    "/en/account/:path*",
+    "/en/checkout/:path*",
+    "/pt/account/:path*",
+    "/pt/checkout/:path*",
   ],
 };

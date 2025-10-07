@@ -10,6 +10,7 @@ module.exports = {
   i18n: {
     locales,
     defaultLocale,
+    localeDetection: false,
   },
   webpack: (config) => {
     config.resolve.alias["next-intl"] = path.resolve(
