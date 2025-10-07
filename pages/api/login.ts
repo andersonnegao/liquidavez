@@ -37,10 +37,10 @@ export default async function handler(
 /*
 import type { NextRequest, NextResponse } from 'next/server';
 
-import { createMiddlewareSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
 
 export default async function handler(req: NextRequest, res: NextResponse) {
-  const supabase = createMiddlewareSupabaseClient({ req, res });
+  const supabase = createMiddlewareClient({ req, res });
 
   if (req.method === 'POST') {
     // Process a POST request

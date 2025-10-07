@@ -1,13 +1,16 @@
-import type { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
-import { createMiddlewareSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+import type { Database } from "@/types/supabase";
 
 export const config = {
   runtime: 'edge',
 };
 
-export default async function handler(req: NextRequest, res: NextResponse) {
-  const supabase = createMiddlewareSupabaseClient({ req, res });
+export default async function handler(req: NextRequest) {
+  const res = NextResponse.next();
+  const supabase = createMiddlewareClient<Database>({ req, res });
 
   const { searchParams } = new URL(req.url);
   const shelf = searchParams.get('shelf');
@@ -65,10 +68,11 @@ export default async function handler(req: NextRequest, res: NextResponse) {
     .limit(limit)
     .range(range[0], range[1]);
 
-  return new Response(JSON.stringify(response), {
-    status: 200,
-    headers: {
-      'content-type': 'application/json',
-    },
+  const jsonResponse = NextResponse.json(response, { status: 200 });
+
+  res.cookies.getAll().forEach((cookie) => {
+    jsonResponse.cookies.set(cookie);
   });
+
+  return jsonResponse;
 }

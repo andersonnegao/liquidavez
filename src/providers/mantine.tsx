@@ -9,12 +9,12 @@ import {
 import { NotificationsProvider } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
 
-import { Inter } from "next/font/google";
+import "@fontsource/mulish/400.css";
+import "@fontsource/mulish/600.css";
+import "@fontsource/mulish/700.css";
+import "@fontsource/mulish/800.css";
 
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
-});
+const fontFamily = "'Mulish', sans-serif";
 
 export default function CustomMantineProvider({
   children,
@@ -66,8 +66,8 @@ export default function CustomMantineProvider({
               '#101113',
             ],
           },
-          fontFamily: inter.style.fontFamily,
-          headings: { fontFamily: inter.style.fontFamily },
+          fontFamily,
+          headings: { fontFamily },
         }}
       >
         <NotificationsProvider position="top-center" limit={5}>
