@@ -11,22 +11,31 @@ import ProductFilter from "@/components/product/product-filter";
 import ProductPagination from "@/components/product/product-pagination";
 
 import { prisma } from "@/prisma/client";
-import { type shelf } from "@prisma/client";
+
+type AisleShelf = {
+  id: number;
+  name: string;
+  slug: string | null;
+  value: number;
+  aisle_name: string;
+  aisle_slug: string;
+  department_name: string;
+  department_slug: string;
+  count: number;
+};
 
 import useCategories from "@/src/hooks/useCategories";
 
-interface Shelf extends shelf {
-  count: string;
-  department_slug: string;
-  aisle_slug: string;
-}
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps<{
+  shelves: AisleShelf[];
+  slug: string | string[] | undefined;
+  departmentSlug: string | string[] | undefined;
+}> = async (ctx) => {
   const { aisle: aisleSlug, department: departmentSlug } = ctx.query;
 
   // get all shelves for this aisle and the product count for each of these shelves
-  const shelves = await prisma.$queryRaw`SELECT a.id, a.name, a.slug, a.value, 
-    b.name AS aisle_name, b.slug AS aisle_slug, 
+  const shelves = (await prisma.$queryRaw`SELECT a.id, a.name, a.slug, a.value,
+    b.name AS aisle_name, b.slug AS aisle_slug,
     c.name AS department_name, c.slug AS department_slug,
     COUNT(*)::int FROM shelf a
     INNER JOIN aisle b ON a.aisle = b.value
@@ -35,7 +44,13 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     WHERE b.slug = ${aisleSlug}
     GROUP BY a.id, b.name, b.slug, c.name, c.slug
     ORDER BY count DESC
-    `;
+    `) as AisleShelf[];
+
+  if (!shelves.length) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {
@@ -51,8 +66,7 @@ export default function Category({
   slug,
   departmentSlug,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const { aisle_name, aisle_slug, department_name, department_slug } =
-    shelves![0];
+  const [{ aisle_name, aisle_slug, department_name, department_slug }] = shelves;
 
   const { settings, setSettings } = useCategories();
 
@@ -94,7 +108,7 @@ export default function Category({
 
       <ProductsLayout.Body>
         <ProductsLayout.Categories>
-          {shelves.map((shelf: Shelf) => (
+          {shelves.map((shelf) => (
             <li key={shelf.name}>
               <NextLink
                 href={`/shop/browse/${shelf.department_slug}/${shelf.aisle_slug}/${shelf.slug}`}

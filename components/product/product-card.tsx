@@ -11,7 +11,6 @@ import Quantity from "@/components/product/product-quantity";
 import capitalize from "@/src/utils/capitalize";
 
 import { type Products } from "@/src/utils/supabase";
-import type { products } from "@prisma/client";
 
 type Price = {
   isSpecial: boolean;
@@ -23,7 +22,7 @@ export default function ProductCard({
   product,
   priority = false,
 }: {
-  product: products;
+  product: Products;
   priority?: boolean;
 }) {
   const { sku, name, unit } = product;

@@ -14,7 +14,7 @@ import { IconChevronDown, IconChevronUp, IconHome2 } from "@tabler/icons-react";
 /*** COMPONENTS ***/
 import ProductCard from "@/components/product/product-card";
 
-import type { products } from "@prisma/client";
+import type { Products } from "@/src/utils/supabase";
 
 type Children = {
   children: ReactNode;
@@ -99,7 +99,7 @@ const Cards = ({ data }: { data: CardData }) => {
   return (
     <div className="grid w-full gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {data && data.data
-        ? data.data.map((product: products) => (
+        ? data.data.map((product: Products) => (
             <ProductCard product={product} key={product.sku} />
           ))
         : [0, 1, 2, 3, 4].map((number, idx) => (

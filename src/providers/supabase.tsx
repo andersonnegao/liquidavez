@@ -11,7 +11,7 @@ export default function SupabaseProvider({
   initialSession,
 }: {
   children: JSX.Element;
-  initialSession: Session;
+  initialSession: Session | null;
 }) {
   const [supabase] = useState(() => createBrowserSupabaseClient<Database>());
 

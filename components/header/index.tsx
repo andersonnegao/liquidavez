@@ -6,6 +6,8 @@ import { useRouter } from "next/router";
 import { Autocomplete, Paper } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 
+import { useTranslations } from "next-intl";
+
 /*** STATE ***/
 import { useStore } from "@/src/state/store";
 
@@ -17,9 +19,11 @@ import Auth from "./auth";
 import HeaderDepartments from "@/components/header/header-departments";
 
 import CartButton from "./cart-button";
+import LocaleSwitcher from "./locale-switcher";
 
 export default function Header() {
   const { push, isReady, query } = useRouter();
+  const t = useTranslations("Header");
 
   /*** STATE ***/
   const { account, setAccount } = useStore();
@@ -28,22 +32,31 @@ export default function Header() {
 
   const supabase = useSupabaseClient();
 
-  // // sync local state with user's record for any updates
-  supabase
-    .channel("any")
-    .on(
-      "postgres_changes",
-      {
-        event: "UPDATE",
-        schema: "public",
-        table: "users",
-        filter: `id=eq.${account?.id}`,
-      },
-      (payload) => {
-        setAccount(payload.new as User);
-      }
-    )
-    .subscribe();
+  useEffect(() => {
+    if (!account?.id) {
+      return;
+    }
+
+    const channel = supabase
+      .channel(`users-updates-${account.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "users",
+          filter: `id=eq.${account.id}`,
+        },
+        (payload) => {
+          setAccount(payload.new as User);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [account?.id, setAccount, supabase]);
 
   useEffect(() => {
     if (isReady && query.q) setSearchQuery(query.q as string);
@@ -63,7 +76,10 @@ export default function Header() {
                 </h1>
               </Link>
 
-              <Auth />
+              <div className="flex items-center gap-3">
+                <LocaleSwitcher />
+                <Auth />
+              </div>
             </div>
 
             <div className="flex items-center justify-between gap-3">
@@ -87,7 +103,7 @@ export default function Header() {
                     onItemSubmit={(item) => {
                       push(`/shop/search?q=${item.value}`);
                     }}
-                    placeholder="Buscar produtos"
+                    placeholder={t("searchPlaceholder")}
                     data={[
                       "Milk",
                       "Bread",

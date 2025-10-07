@@ -13,6 +13,7 @@ const customJestConfig = {
   testEnvironment: "jest-environment-jsdom",
   moduleNameMapper: {
     "\\.(css|less)$": "<rootDir>/__tests__/__mocks__/styleMock.js",
+    "^next-intl$": "<rootDir>/src/i18n/next-intl.tsx",
   },
   setupFiles: ["<rootDir>/__mocks__/ResizeObserver.ts"],
 };

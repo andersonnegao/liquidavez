@@ -2,9 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 /*** SUPABASE ***/
-import type { Cart, User } from "@/src/utils/supabase";
-
-import { type products } from "@prisma/client";
+import type { Cart, User, Products } from "@/src/utils/supabase";
 
 type State = {
   //cart: any;
@@ -12,16 +10,12 @@ type State = {
   account: User | null;
 };
 
-type Test = {
-  prevState: State & Action;
-};
-
 type Action = {
-  addToCart: (product: products) => void;
-  removeFromCart: (product: products) => void;
-  addQuantity: (product: products) => void;
-  subtractQuantity: (product: products) => void;
-  clearTrolley: (cart: State["cart"]) => void;
+  addToCart: (product: Products) => void;
+  removeFromCart: (product: Products) => void;
+  addQuantity: (product: Products) => void;
+  subtractQuantity: (product: Products) => void;
+  clearTrolley: () => void;
   setAccount: (account: State["account"]) => void;
 };
 
@@ -30,23 +24,21 @@ export const useStore = create<State & Action>()(
     (set, get) => ({
       cart: [],
       addToCart: (product) => {
-        set((state) => ({
-          cart: [
-            ...state.cart,
-            {
-              ...product,
-              cart_quantity: 1,
-            } as Cart,
-          ],
-        }));
-      },
-
-      removeFromCart: (product) => {
         set((state) => {
-          const index = state.cart.findIndex(
-            (state) => state.sku === product.sku
+          const existingItem = state.cart.find(
+            (item) => item.sku === product.sku
           );
-          state.cart.splice(index, 1);
+
+          if (existingItem) {
+            return {
+              cart: state.cart.map((item) =>
+                item.sku === product.sku
+                  ? { ...item, cart_quantity: item.cart_quantity + 1 }
+                  : item
+              ),
+            };
+          }
+
           return {
             cart: [
               ...state.cart,
@@ -59,42 +51,45 @@ export const useStore = create<State & Action>()(
         });
       },
 
-      addQuantity: (product) => {
-        set((state) => {
-          // find the product
-          const item = state.cart.find((state) => state.sku === product.sku);
-          item!.cart_quantity++;
+      removeFromCart: (product) => {
+        set((state) => ({
+          cart: state.cart.filter((item) => item.sku !== product.sku),
+        }));
+      },
 
-          return {
-            cart: [...state.cart],
-          };
-        });
+      addQuantity: (product) => {
+        set((state) => ({
+          cart: state.cart.map((item) =>
+            item.sku === product.sku
+              ? { ...item, cart_quantity: item.cart_quantity + 1 }
+              : item
+          ),
+        }));
       },
 
       subtractQuantity: (product) => {
         set((state) => {
-          // find the product
-          const item = state.cart.find((state) => state.sku === product.sku);
+          const existingItem = state.cart.find(
+            (item) => item.sku === product.sku
+          );
 
-          if (item!.cart_quantity === 1) {
-            // find the product to remove
-            const index = state.cart.findIndex(
-              (state) => state.sku === product.sku
-            );
+          if (!existingItem) {
+            return { cart: state.cart };
+          }
 
-            state.cart.splice(index, 1); // remove from cart array
-
+          if (existingItem.cart_quantity <= 1) {
             return {
-              cart: [...state.cart],
-            };
-          } else {
-            // decrement product quantity
-            item!.cart_quantity--;
-
-            return {
-              cart: [...state.cart],
+              cart: state.cart.filter((item) => item.sku !== product.sku),
             };
           }
+
+          return {
+            cart: state.cart.map((item) =>
+              item.sku === product.sku
+                ? { ...item, cart_quantity: item.cart_quantity - 1 }
+                : item
+            ),
+          };
         });
       },
       clearTrolley: () => set({ cart: [] }),

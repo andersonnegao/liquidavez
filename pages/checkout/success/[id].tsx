@@ -97,8 +97,8 @@ export default function OrderSuccess({ order, status }: PageProps) {
   const { clearTrolley } = useStore();
 
   useEffect(() => {
-    clearTrolley([]); // if no error, clear the cart
-  }, []);
+    clearTrolley(); // if no error, clear the cart
+  }, [clearTrolley]);
 
   return (
     <div className="space-y-3">

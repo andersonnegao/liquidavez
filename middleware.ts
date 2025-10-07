@@ -1,6 +1,8 @@
-import { createMiddlewareSupabaseClient } from '@supabase/auth-helpers-nextjs';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { createMiddlewareSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+import { defaultLocale, locales } from "@/src/i18n/config";
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
@@ -16,10 +18,23 @@ export async function middleware(req: NextRequest) {
 
   // if no session, redirect to login page
   const redirectUrl = req.nextUrl.clone();
-  redirectUrl.pathname = '/';
+  const locale = req.nextUrl.locale ?? defaultLocale;
+
+  redirectUrl.pathname =
+    locale && locale !== defaultLocale ? `/${locale}` : "/";
+
   return NextResponse.redirect(redirectUrl);
 }
 
 export const config = {
-  matcher: ['/account/:path*', '/checkout/:path*'],
+  matcher: [
+    "/account/:path*",
+    "/checkout/:path*",
+    ...locales
+      .filter((locale) => locale !== defaultLocale)
+      .flatMap((locale) => [
+        `/${locale}/account/:path*`,
+        `/${locale}/checkout/:path*`,
+      ]),
+  ],
 };
